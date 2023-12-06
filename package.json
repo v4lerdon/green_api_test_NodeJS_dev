@@ -1,0 +1,29 @@
+{
+  "name": "m1",
+  "version": "1.0.0",
+  "description": "service m1",
+  "main": "index.js",
+  "scripts": {
+    "startm1": "node m1.js",
+    "startm2": "node m2.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/v4lerdon/green_api_test_NodeJS_dev.git"
+  },
+  "author": "valerdon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/v4lerdon/green_api_test_NodeJS_dev/issues"
+  },
+  "homepage": "https://github.com/v4lerdon/green_api_test_NodeJS_dev#readme",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "express": "^4.18.2",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0"
+  }
+}
