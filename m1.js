@@ -8,7 +8,6 @@ const PORT = 3000;
 const REQUEST_QUEUE_NAME = 'requests';
 const PROCESSED_QUEUE_NAME = 'processed_requests';
 
-// Настройка логгера
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.simple(),
@@ -34,40 +33,33 @@ amqp.connect('amqp://localhost').then((connection) => {
       if (msg !== null) {
         const processedData = JSON.parse(msg.content.toString());
         logger.info('Обработанное сообщение:', processedData);
-
         // Сохранение обработанного сообщения в переменной, чтобы микросервис m1 мог получить результат
         if (requestPromiseResolver) {
           requestPromiseResolver(processedData);
           requestPromiseResolver = null;
         }
-
         channel.ack(msg);
       }
     });
 
     // Очередь для отправки запросов на обработку
     channel.assertQueue(REQUEST_QUEUE_NAME, { durable: true });
-
     // Обещание (Promise) для хранения функции-разрешителя (resolver)
     let requestPromiseResolver;
-
     app.post('/process', async (req, res) => {
       const requestData = req.body;
       logger.info('Получен POST запрос:', requestData);
-
       // Отправляем запрос в очередь
       channel.sendToQueue(REQUEST_QUEUE_NAME, Buffer.from(JSON.stringify(requestData)));
       logger.info('Запрос отправлен в обработку:', requestData);
-
       // Создаем обещание, которое будет разрешено при получении ответа от второго микросервиса
       const resultPromise = new Promise((resolve) => {
         requestPromiseResolver = resolve;
       });
 
       try {
-        // Ждем разрешения обещания
+        // Ждем разрешения promise
         const processedData = await resultPromise;
-
         // Отправляем HTTP-ответ с результатом
         res.json({ processedData });
       } catch (error) {
